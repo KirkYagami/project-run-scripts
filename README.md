@@ -6,8 +6,10 @@ Shell scripts that recreate and run the LoanServe and MeterMind projects.
 | --- | --- |
 | `loanserve/create_loanserve.sh` | Writes every LoanServe source file (overwrites existing ones). |
 | `loanserve/run_loanserve.sh` | Installs requirements into the local Python, builds missing artefacts, runs the tests, starts the API. |
+| `loanserve/loanserve_swagger_paste.txt` | Every LoanServe endpoint in demo order: body to paste into Swagger, token, expected result. |
 | `metermind/create_metermind.sh` | Writes every MeterMind source file (overwrites existing ones). |
 | `metermind/run_metermind.sh` | Installs requirements into the local Python, builds missing artefacts, runs the tests, starts the API. |
+| `metermind/metermind_swagger_paste.txt` | Every MeterMind endpoint in demo order: body to paste into Swagger, token, expected result. |
 
 ## Usage
 

@@ -1,0 +1,627 @@
+MeterMind - Swagger paste sheet
+
+Each block: the endpoint to open in Swagger, which token must be authorised,
+what to fill in, and what you should get back.
+In Swagger: open the endpoint -> Try it out -> paste -> Execute.
+
+Start: PORT=3001 ROOT_PATH=/proxy/3001 ./run_metermind.sh --skip-tests  ->  open /proxy/3001/docs
+Readings are saved in SQLite, so YOUR reading_id values may differ from the ones below:
+copy the reading_id from each Submit response (readings A, B and C) and use those.
+Accounts are kept in memory: after a restart, sign up again.
+
+==============================================================================
+ 1. Health check
+==============================================================================
+Endpoint : GET /api/v1/health
+Token    : -
+Body     : (none)
+Expect   : 200, status up
+
+==============================================================================
+ 2. Sign up a consumer
+==============================================================================
+Endpoint : POST /api/v1/accounts
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "email_address": "asha.verma@example.in",
+  "password": "Consumer@2026"
+}
+Expect   : 201, role consumer
+
+==============================================================================
+ 3. Sign up an inspector
+==============================================================================
+Endpoint : POST /api/v1/accounts
+Token    : -
+Body     :
+{
+  "account_number": "ACC90000001",
+  "email_address": "je.1180@discom.example.in",
+  "password": "Inspector@2026",
+  "role": "inspector"
+}
+Expect   : 201, role inspector
+
+==============================================================================
+ 4. Same account again (guard)
+==============================================================================
+Endpoint : POST /api/v1/accounts
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "email_address": "asha.verma@example.in",
+  "password": "Consumer@2026"
+}
+Expect   : 409, already signed up
+
+==============================================================================
+ 5. Badly formed account number (guard)
+==============================================================================
+Endpoint : POST /api/v1/accounts
+Token    : -
+Body     :
+{
+  "account_number": "ACC123",
+  "email_address": "x@example.in",
+  "password": "x"
+}
+Expect   : 422, ACC followed by eight digits
+
+==============================================================================
+ 6. Log in with the wrong password (guard)
+==============================================================================
+Endpoint : POST /api/v1/accounts/login
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "password": "wrong"
+}
+Expect   : 401
+
+==============================================================================
+ 7. Log in as the consumer
+==============================================================================
+Endpoint : POST /api/v1/accounts/login
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "password": "Consumer@2026"
+}
+Expect   : 200. Copy access_token -> Authorize (padlock) -> paste -> Authorize
+
+==============================================================================
+ 8. Log in as the inspector
+==============================================================================
+Endpoint : POST /api/v1/accounts/login
+Token    : -
+Body     :
+{
+  "account_number": "ACC90000001",
+  "password": "Inspector@2026"
+}
+Expect   : 200. Keep this token in a note for the status steps
+
+==============================================================================
+ 9. Submit: domestic reading
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : - (no token needed)
+Body     :
+{
+  "account_number": "ACC10000123",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 201, 467 units, net bill 2854.48. Note the reading_id (reading A)
+
+==============================================================================
+10. Submit: commercial reading
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000124",
+  "meter_serial": "MTR-CD-654321",
+  "consumer_category": "commercial",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 15,
+  "cycle_days": 31,
+  "previous_reading": 1000,
+  "current_reading": 4200,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 201, 3200 units, net bill 36357.4. Note the reading_id (reading B)
+
+==============================================================================
+11. Submit: agricultural reading
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000125",
+  "meter_serial": "MTR-EF-112233",
+  "consumer_category": "agricultural",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 5,
+  "cycle_days": 30,
+  "previous_reading": 0,
+  "current_reading": 3000,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 201, net bill 0.0 (subsidy floors it)
+
+==============================================================================
+12. Submit: reading that went backwards
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000126",
+  "meter_serial": "MTR-AB-223344",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 50000,
+  "current_reading": 49500,
+  "read_type": "estimated",
+  "read_date": "2026-06-30"
+}
+Expect   : 201, is_billable false, one refusal reason. Note the reading_id (reading C)
+
+==============================================================================
+13. Submit: misspelt category and dd/mm/yyyy date
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000127",
+  "meter_serial": "MTR-AB-334455",
+  "consumer_category": "COMMERICAL",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "30/06/2026"
+}
+Expect   : 201, category settled to commercial
+
+==============================================================================
+14. Submit: category with no tariff (guard)
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "streetlight",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 422, streetlight
+
+==============================================================================
+15. Submit: bad account and billing period (guard)
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC1",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "domestic",
+  "billing_period": "2026-13",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 422, two errors at once
+
+==============================================================================
+16. Submit: cycle of 40 days (guard)
+==============================================================================
+Endpoint : POST /api/v1/readings
+Token    : -
+Body     :
+{
+  "account_number": "ACC10000123",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 40,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 422, must be <= 36
+
+==============================================================================
+17. List before authorising (guard)
+==============================================================================
+Endpoint : GET /api/v1/readings
+Token    : - (run before clicking Authorize)
+Body     : (none)
+Expect   : 401
+
+==============================================================================
+18. List the reading book
+==============================================================================
+Endpoint : GET /api/v1/readings
+Token    : consumer
+Body     : (none)
+Expect   : 200, total 5
+
+==============================================================================
+19. List domestic + estimated only
+==============================================================================
+Endpoint : GET /api/v1/readings
+Token    : consumer
+Query    : consumer_category = domestic
+Query    : read_type = estimated
+Body     : (none)
+Expect   : 200, total 1 (reading C)
+
+==============================================================================
+20. List page 2, two per page
+==============================================================================
+Endpoint : GET /api/v1/readings
+Token    : consumer
+Query    : page = 2
+Query    : page_size = 2
+Body     : (none)
+Expect   : 200, the 3rd and 4th readings
+
+==============================================================================
+21. Read one reading
+==============================================================================
+Endpoint : GET /api/v1/readings/{reading_identifier}
+Token    : -
+Path     : reading_identifier = RDG40000001   (= reading A; use YOUR reading A id)
+Body     : (none)
+Expect   : 200, the priced reading
+
+==============================================================================
+22. Read a reading that does not exist (guard)
+==============================================================================
+Endpoint : GET /api/v1/readings/{reading_identifier}
+Token    : -
+Path     : reading_identifier = RDG00000000
+Body     : (none)
+Expect   : 404
+
+==============================================================================
+23. Replace reading A as commercial
+==============================================================================
+Endpoint : PUT /api/v1/readings/{reading_identifier}
+Token    : -
+Path     : reading_identifier = RDG40000001   (= reading A; use YOUR reading A id)
+Body     :
+{
+  "account_number": "ACC10000123",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "commercial",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675,
+  "read_type": "actual",
+  "read_date": "2026-06-30"
+}
+Expect   : 200, net bill 4812.66
+
+==============================================================================
+24. Move a case with no token (guard)
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : - (Logout first)
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "assigned",
+  "noted_by": "je/1180"
+}
+Expect   : 401
+
+==============================================================================
+25. Move a case as the consumer (guard)
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : consumer
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "assigned",
+  "noted_by": "je/1180"
+}
+Expect   : 403, role inspector is required
+
+==============================================================================
+26. Move case C: raised -> assigned
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : INSPECTOR (Authorize -> Logout -> paste inspector token)
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "assigned",
+  "noted_by": "je/1180"
+}
+Expect   : 200, from raised to assigned
+
+==============================================================================
+27. Move case C: skip a rung (guard)
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : inspector
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "regularised",
+  "noted_by": "je/1180"
+}
+Expect   : 409, may move to inspected, not to regularised
+
+==============================================================================
+28. Move case C: assigned -> inspected
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : inspector
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "inspected",
+  "noted_by": "je/1180"
+}
+Expect   : 200
+
+==============================================================================
+29. Move case C: inspected -> billed_back
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : inspector
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "billed_back",
+  "noted_by": "je/1180"
+}
+Expect   : 200
+
+==============================================================================
+30. Move a closed case (guard)
+==============================================================================
+Endpoint : PATCH /api/v1/readings/{reading_identifier}/status
+Token    : inspector
+Path     : reading_identifier = RDG40000004   (= reading C; use YOUR reading C id)
+Body     :
+{
+  "wanted_status": "assigned",
+  "noted_by": "je/1180"
+}
+Expect   : 409, a case at billed_back is closed
+
+==============================================================================
+31. Screening with no token (guard)
+==============================================================================
+Endpoint : POST /api/v1/screening
+Token    : - (Logout first)
+Body     :
+{
+  "account_number": "ACC10000009",
+  "meter_serial": "MTR-AB-100009",
+  "consumer_category": "commercial",
+  "billing_period": "2025-06",
+  "sanctioned_load_kw": 9.687,
+  "cycle_days": 34,
+  "previous_reading": 47781.9,
+  "current_reading": 48842.7,
+  "units_consumed": 1060.8,
+  "twelve_month_average_units": 1108.99,
+  "same_month_last_year_units": 1148.85,
+  "consecutive_estimated_reads": 1,
+  "days_since_actual_read": 38,
+  "neighbourhood_average_units": 1197.51,
+  "arrears_inr": 1163.41,
+  "payment_defaults_last_year": 3,
+  "seal_check_result": "intact",
+  "meter_make": "Avon",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30",
+  "read_type": "actual",
+  "read_date": "2025-06-14"
+}
+Expect   : 401
+
+==============================================================================
+32. Screening: normal high usage
+==============================================================================
+Endpoint : POST /api/v1/screening
+Token    : consumer or inspector
+Body     :
+{
+  "account_number": "ACC10000009",
+  "meter_serial": "MTR-AB-100009",
+  "consumer_category": "commercial",
+  "billing_period": "2025-06",
+  "sanctioned_load_kw": 9.687,
+  "cycle_days": 34,
+  "previous_reading": 47781.9,
+  "current_reading": 48842.7,
+  "units_consumed": 1060.8,
+  "twelve_month_average_units": 1108.99,
+  "same_month_last_year_units": 1148.85,
+  "consecutive_estimated_reads": 1,
+  "days_since_actual_read": 38,
+  "neighbourhood_average_units": 1197.51,
+  "arrears_inr": 1163.41,
+  "payment_defaults_last_year": 3,
+  "seal_check_result": "intact",
+  "meter_make": "Avon",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30",
+  "read_type": "actual",
+  "read_date": "2025-06-14"
+}
+Expect   : 200, genuine_high_usage -> queue_no_action.csv
+
+==============================================================================
+33. Screening: run of estimated reads
+==============================================================================
+Endpoint : POST /api/v1/screening
+Token    : consumer or inspector
+Body     :
+{
+  "account_number": "ACC10000003",
+  "meter_serial": "MTR-AB-100003",
+  "consumer_category": "domestic",
+  "billing_period": "2025-11",
+  "sanctioned_load_kw": 3.631,
+  "cycle_days": 35,
+  "previous_reading": 74357.4,
+  "current_reading": 74691.9,
+  "units_consumed": 334.5,
+  "twelve_month_average_units": 335.37,
+  "same_month_last_year_units": 297.35,
+  "consecutive_estimated_reads": 3,
+  "days_since_actual_read": 120,
+  "neighbourhood_average_units": 349.02,
+  "arrears_inr": 3001.03,
+  "payment_defaults_last_year": 1,
+  "seal_check_result": "intact",
+  "meter_make": "Genus",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30",
+  "read_type": "estimated",
+  "read_date": "2025-06-14"
+}
+Expect   : 200, estimated_read -> queue_meter_reading.csv
+
+==============================================================================
+34. Screening: far above its history
+==============================================================================
+Endpoint : POST /api/v1/screening
+Token    : consumer or inspector
+Body     :
+{
+  "account_number": "ACC10000022",
+  "meter_serial": "MTR-AB-100022",
+  "consumer_category": "domestic",
+  "billing_period": "2025-09",
+  "sanctioned_load_kw": 9.608,
+  "cycle_days": 29,
+  "previous_reading": 27125.1,
+  "current_reading": 28337.4,
+  "units_consumed": 1212.2,
+  "twelve_month_average_units": 424.28,
+  "same_month_last_year_units": 363.67,
+  "consecutive_estimated_reads": 0,
+  "days_since_actual_read": 37,
+  "neighbourhood_average_units": 484.9,
+  "arrears_inr": 3572.83,
+  "payment_defaults_last_year": 2,
+  "seal_check_result": "intact",
+  "meter_make": "HPL",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30",
+  "read_type": "actual",
+  "read_date": "2025-06-14"
+}
+Expect   : 200, tariff_mismatch -> queue_billing.csv
+
+==============================================================================
+35. Assistant question
+==============================================================================
+Endpoint : POST /api/v1/assistant/questions
+Token    : consumer or inspector
+Body     :
+{
+  "question": "Why is my bill for June so high this month?",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "thread_id": "demo-bill"
+}
+Expect   : 503 without GEMINI_API_KEY; 200 with a key (answer varies)
+
+==============================================================================
+36. Assistant: blank question (guard)
+==============================================================================
+Endpoint : POST /api/v1/assistant/questions
+Token    : consumer or inspector
+Body     :
+{
+  "question": "   "
+}
+Expect   : 422, a question is required
+
+==============================================================================
+37. Release a held thread as the consumer (guard)
+==============================================================================
+Endpoint : POST /api/v1/assistant/threads/{thread_id}/release
+Token    : consumer
+Path     : thread_id = demo-bill
+Body     : (none)
+Expect   : 403, role inspector is required
+
+==============================================================================
+38. Release a thread nobody started
+==============================================================================
+Endpoint : POST /api/v1/assistant/threads/{thread_id}/release
+Token    : inspector
+Path     : thread_id = thread-nobody-started
+Body     : (none)
+Expect   : 404, is not waiting
+
+==============================================================================
+39. Delete reading B
+==============================================================================
+Endpoint : DELETE /api/v1/readings/{reading_identifier}
+Token    : -
+Path     : reading_identifier = RDG40000002   (= reading B; use YOUR reading B id)
+Body     : (none)
+Expect   : 204, empty body
+
+==============================================================================
+40. Delete reading B again (guard)
+==============================================================================
+Endpoint : DELETE /api/v1/readings/{reading_identifier}
+Token    : -
+Path     : reading_identifier = RDG40000002   (= reading B; use YOUR reading B id)
+Body     : (none)
+Expect   : 404
+
