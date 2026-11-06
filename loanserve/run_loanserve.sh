@@ -73,6 +73,38 @@ fi
 # ------------------------------------------------------------------ 2. Build artefacts
 BUILT=0; SKIPPED=0
 
+# An output written "path#table" counts as built only when that SQLite file holds the table;
+# an empty or half-made database file is not a built one.
+has_table() {
+  "$PY" - "$1" "$2" <<'PYEOF'
+import sqlite3, sys
+try:
+    connection = sqlite3.connect(f"file:{sys.argv[1]}?mode=ro", uri=True)
+    found = connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (sys.argv[2],)
+    ).fetchone()
+except sqlite3.Error:
+    found = None
+sys.exit(0 if found else 1)
+PYEOF
+}
+
+# A step is up to date when every output exists (with its table, if one is named) and no
+# input is newer than it - the same rule make uses, so rebuilding an input rebuilds what
+# depends on it.
+up_to_date() {
+  local outputs="$1" inputs="$2" output path input
+  for output in $outputs; do
+    path="${output%%#*}"
+    [ -e "$path" ] || return 1
+    if [ "$output" != "$path" ]; then has_table "$path" "${output#*#}" || return 1; fi
+    for input in $inputs; do
+      if [ "$input" -nt "$path" ]; then return 1; fi
+    done
+  done
+  return 0
+}
+
 # step "name" "inputs (space separated)" "outputs (space separated)" command...
 step() {
   local name="$1" inputs="$2" outputs="$3"; shift 3
@@ -81,10 +113,8 @@ step() {
   if [ -n "$missing" ]; then
     warn "skip  $name (missing input:$missing)"; SKIPPED=$((SKIPPED + 1)); return 0
   fi
-  if [ "$REBUILD" -eq 0 ]; then
-    local all_there=1
-    for path in $outputs; do [ -e "$path" ] || all_there=0; done
-    if [ "$all_there" -eq 1 ]; then note "ok    $name (already built)"; return 0; fi
+  if [ "$REBUILD" -eq 0 ] && up_to_date "$outputs" "$inputs"; then
+    note "ok    $name (up to date)"; return 0
   fi
   note "build $name"
   "$@" || { echo "Build step '$name' failed." >&2; exit 1; }
@@ -109,7 +139,7 @@ CLASSIFIER=artifacts/message_classifier.pkl
 # Applications: clean, load, enrich, model, queue.
 step "clean the application books" "$TRAIN $PREDICT" "$CLEANED $PREDICT_CLEANED output/rejected_records.csv" \
   mod loanserve.data_access.cleaning_pipeline
-step "load the application database" "$CLEANED" "$DB" mod loanserve.data_access.database_loader
+step "load the application database" "$CLEANED" "$DB#loan_applications" mod loanserve.data_access.database_loader
 step "feature engineering"   "$CLEANED $PREDICT_CLEANED" \
   "processed_data/loan_applications_enriched.csv $PREDICT_ENRICHED output/feature_lift.json" \
   mod loanserve.risk_models.feature_engineering
