@@ -265,9 +265,24 @@ if [ "$SERVE" -eq 1 ]; then
   [ -e "$CHAMPION" ] || warn "no champion model: /api/v1/screening will answer 503"
   [ -e "$URGENCY_MODEL" ] || warn "no complaint classifiers: /api/v1/assistant/questions cannot triage"
   [ "$HAS_KEY" -eq 1 ] || warn "no GEMINI_API_KEY: the assistant endpoints will answer 503"
+  # Behind a path proxy (VS Code / code-server labs serve the app at /proxy/<port>/), the app
+  # must know that prefix or Swagger asks for /openapi.json outside the proxy and stays blank.
+  # ROOT_PATH wins when set (even empty); otherwise it is read from VSCODE_PROXY_URI.
+  if [ -z "${ROOT_PATH+set}" ] && [ -n "${VSCODE_PROXY_URI:-}" ]; then
+    PROXIED="${VSCODE_PROXY_URI//\{\{port\}\}/$PORT}"
+    case "$PROXIED" in
+      *://*/*) ROOT_PATH="/${PROXIED#*://*/}" ;;
+      *) ROOT_PATH="${PROXIED#.}"; ROOT_PATH="/${ROOT_PATH#/}" ;;
+    esac
+  fi
+  ROOT_PATH="${ROOT_PATH:-}"; ROOT_PATH="${ROOT_PATH%/}"
+  if [ -n "$ROOT_PATH" ]; then
+    note "serving under the proxy prefix $ROOT_PATH (open <your lab URL>$ROOT_PATH/docs)"
+  fi
   exec "$PY" -c "
 import uvicorn
 from config import constants
 from metermind.api.application_factory import build_application
-uvicorn.run(build_application(constants.ORM_DATABASE_PATH), host='$HOST', port=$PORT)"
+uvicorn.run(build_application(constants.ORM_DATABASE_PATH), host='$HOST', port=$PORT,
+            root_path='$ROOT_PATH', proxy_headers=True, forwarded_allow_ips='*')"
 fi

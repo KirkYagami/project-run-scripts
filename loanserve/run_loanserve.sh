@@ -213,9 +213,24 @@ if [ "$SERVE" -eq 1 ]; then
   say "Starting LoanServe on http://$HOST:$PORT  (Swagger: http://$HOST:$PORT/docs, Ctrl+C to stop)"
   note "sign up at POST /api/v1/auth/signup (role: administrator or loan_officer), log in, then Authorize"
   [ -n "${LOANSERVE_DATABASE_URL:-}" ] || note "applications and accounts are kept in memory; set LOANSERVE_DATABASE_URL to keep applications"
+  # Behind a path proxy (VS Code / code-server labs serve the app at /proxy/<port>/), the app
+  # must know that prefix or Swagger asks for /openapi.json outside the proxy and stays blank.
+  # ROOT_PATH wins when set (even empty); otherwise it is read from VSCODE_PROXY_URI.
+  if [ -z "${ROOT_PATH+set}" ] && [ -n "${VSCODE_PROXY_URI:-}" ]; then
+    PROXIED="${VSCODE_PROXY_URI//\{\{port\}\}/$PORT}"
+    case "$PROXIED" in
+      *://*/*) ROOT_PATH="/${PROXIED#*://*/}" ;;
+      *) ROOT_PATH="${PROXIED#.}"; ROOT_PATH="/${ROOT_PATH#/}" ;;
+    esac
+  fi
+  ROOT_PATH="${ROOT_PATH:-}"; ROOT_PATH="${ROOT_PATH%/}"
+  if [ -n "$ROOT_PATH" ]; then
+    note "serving under the proxy prefix $ROOT_PATH (open <your lab URL>$ROOT_PATH/docs)"
+  fi
   exec "$PY" -c "
 import os, uvicorn
 from loanserve.api.application_factory import create_application
 uvicorn.run(create_application(database_url=os.environ.get('LOANSERVE_DATABASE_URL') or None),
-            host='$HOST', port=$PORT)"
+            host='$HOST', port=$PORT, root_path='$ROOT_PATH',
+            proxy_headers=True, forwarded_allow_ips='*')"
 fi

@@ -26,5 +26,16 @@ Python on the machine (`python3` by default, or `PYTHON=/path/to/python`), which
 a lab environment such as VS Code. If that Python is externally managed (PEP 668),
 the install is retried with `--break-system-packages`. Python 3.11+ is required.
 
+### Behind a lab proxy (VS Code / code-server)
+
+If the lab opens the app at a URL like `https://<lab-host>/proxy/3001/`, the app has to know
+that prefix or Swagger loads blank. The scripts read it from `VSCODE_PROXY_URI` when the lab
+sets it; otherwise pass it yourself:
+
+```bash
+PORT=3001 ROOT_PATH=/proxy/3001 bash run_metermind.sh --skip-tests
+# then open https://<lab-host>/proxy/3001/docs
+```
+
 Data files (`data/`) and `.env` are not part of this repo and are never overwritten.
 MeterMind's language-model steps run only when `GEMINI_API_KEY` is set.
