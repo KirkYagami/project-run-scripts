@@ -70,6 +70,34 @@ if [ ! -f .env ]; then
   note "created a .env template (GEMINI_API_KEY / GEMINI_MODEL are empty)"
 fi
 
+# Check the port now rather than after the build and the tests, so a port that is taken
+# fails at once and says who holds it.
+port_in_use() {
+  "$PY" - "$HOST" "$PORT" <<'PYEOF'
+import socket, sys
+probe = socket.socket()
+probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+try:
+    probe.bind((sys.argv[1], int(sys.argv[2])))
+except OSError:
+    sys.exit(0)
+finally:
+    probe.close()
+sys.exit(1)
+PYEOF
+}
+if [ "$SERVE" -eq 1 ] && port_in_use; then
+  echo "Port $PORT on $HOST is already in use, so the API cannot start there." >&2
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >&2 || true
+  elif command -v ss >/dev/null 2>&1; then
+    ss -ltnp "sport = :$PORT" >&2 || true
+  fi
+  echo "Stop that process (often an earlier run of this script: kill <PID>)," >&2
+  echo "or choose another port, e.g.  PORT=$((PORT + 1)) bash $(basename "$SELF")" >&2
+  exit 1
+fi
+
 # ------------------------------------------------------------------ 2. Build artefacts
 BUILT=0; SKIPPED=0
 
