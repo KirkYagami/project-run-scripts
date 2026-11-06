@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# One command for MeterMind: set up Python, build every artefact that is missing, run the
-# tests, then serve the API (Swagger at http://HOST:PORT/docs).
+# One command for MeterMind: install the requirements into the local Python (no venv), build
+# every artefact that is missing, run the tests, then serve the API (Swagger at
+# http://HOST:PORT/docs). PYTHON=/path/to/python picks the interpreter (default python3).
 #
 #   bash run_metermind.sh                # build what is missing, test, serve
 #   bash run_metermind.sh --rebuild      # rebuild every artefact even if it exists
@@ -11,7 +12,8 @@
 # Steps whose input data is missing are skipped with a warning. Steps that need the language
 # model run only when GEMINI_API_KEY is set (in the environment or in .env).
 set -euo pipefail
-cd "$(dirname "$0")"
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+cd "$(dirname "$SELF")"
 
 REBUILD=0; RUN_TESTS=1; SERVE=1
 for argument in "$@"; do
@@ -19,7 +21,7 @@ for argument in "$@"; do
     --rebuild) REBUILD=1 ;;
     --skip-tests) RUN_TESTS=0 ;;
     --no-serve) SERVE=0 ;;
-    -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+    -h|--help) awk 'NR > 1 && /^#/ { print; next } NR > 1 { exit }' "$SELF"; exit 0 ;;
     *) echo "unknown option: $argument" >&2; exit 2 ;;
   esac
 done
@@ -35,7 +37,7 @@ if [ ! -d data ] || [ ! -d metermind ]; then
   exit 1
 fi
 
-# ------------------------------------------------------------------ 1. Python environment
+# ------------------------------------------------------------------ 1. Python (no venv)
 REQUIREMENTS="argon2-cffi>=25.0.0
 chromadb>=1.5.0
 fastapi>=0.141.0
@@ -58,40 +60,30 @@ sqlalchemy>=2.0.0
 starlette>=0.46.0
 uvicorn>=0.30.0"
 
-say "Python environment"
-if [ ! -x .venv/bin/python ]; then
-  if command -v uv >/dev/null 2>&1; then
-    note "creating .venv with uv (Python 3.12)"
-    uv venv .venv --python 3.12 -q
-  else
-    PYTHON=""
-    for candidate in python3.12 python3.13 python3.11 python3; do
-      if command -v "$candidate" >/dev/null 2>&1; then PYTHON="$candidate"; break; fi
-    done
-    [ -n "$PYTHON" ] || { echo "No python3 found; install Python 3.11+ first." >&2; exit 1; }
-    note "creating .venv with $PYTHON"
-    "$PYTHON" -m venv .venv
-  fi
-fi
-PY=.venv/bin/python
+# Uses the interpreter already on the machine and installs into it directly.
+# Set PYTHON=/path/to/python to choose a different one.
+say "Python environment (no venv)"
+PY="${PYTHON:-python3}"
+command -v "$PY" >/dev/null 2>&1 || { echo "No '$PY' found; install Python 3.11+ or set PYTHON=." >&2; exit 1; }
 "$PY" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' \
-  || { echo ".venv uses Python older than 3.11; delete .venv and re-run." >&2; exit 1; }
+  || { echo "$("$PY" -V 2>&1) is too old; Python 3.11+ is needed (set PYTHON=)." >&2; exit 1; }
+note "using $("$PY" -c 'import sys; print(sys.executable, sys.version.split()[0])')"
 
-STAMP=.venv/.metermind-requirements
-if [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$REQUIREMENTS" ]; then
-  note "installing requirements (first run, or the list changed)"
-  REQ_FILE="$(mktemp)"; printf '%s\n' "$REQUIREMENTS" > "$REQ_FILE"
-  if command -v uv >/dev/null 2>&1; then
-    uv pip install -q --python "$PY" -r "$REQ_FILE"
-  else
-    "$PY" -m pip install -q --upgrade pip
-    "$PY" -m pip install -q -r "$REQ_FILE"
+install_requirements() {
+  local log; log="$(mktemp)"
+  if "$PY" -m pip install -q "$@" > "$log" 2>&1; then rm -f "$log"; return 0; fi
+  if grep -q "externally-managed-environment" "$log"; then
+    note "this Python is externally managed; retrying with --break-system-packages"
+    rm -f "$log"
+    "$PY" -m pip install -q --break-system-packages "$@"
+    return
   fi
-  rm -f "$REQ_FILE"
-  printf '%s' "$REQUIREMENTS" > "$STAMP"
-else
-  note "requirements already installed"
-fi
+  cat "$log" >&2; rm -f "$log"; return 1
+}
+note "installing requirements (quick when already installed)"
+REQ_FILE="$(mktemp)"; printf '%s\n' "$REQUIREMENTS" > "$REQ_FILE"
+install_requirements -r "$REQ_FILE" || { rm -f "$REQ_FILE"; echo "Installing requirements failed." >&2; exit 1; }
+rm -f "$REQ_FILE"
 mkdir -p artifacts database output/logs processed_data
 
 HAS_KEY=0
@@ -196,11 +188,11 @@ if [ "$RUN_TESTS" -eq 1 ]; then
   if [ -n "$ROOT_TESTS" ]; then
     note "suite 1: $(echo $ROOT_TESTS | wc -w | tr -d ' ') root test files"
     # shellcheck disable=SC2086
-    .venv/bin/pytest -q -p no:cacheprovider $ROOT_TESTS || TESTS_OK=0
+    "$PY" -m pytest -q -p no:cacheprovider $ROOT_TESTS || TESTS_OK=0
   fi
   if [ -f pytest/tests.py ]; then
     note "suite 2: pytest/tests.py"
-    .venv/bin/pytest -q -p no:cacheprovider pytest/tests.py || TESTS_OK=0
+    "$PY" -m pytest -q -p no:cacheprovider pytest/tests.py || TESTS_OK=0
   fi
   if [ "$TESTS_OK" -eq 1 ]; then
     note "all tests passed"

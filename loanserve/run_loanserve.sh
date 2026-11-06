@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# One command for LoanServe: set up Python, build every artefact that is missing, run the
-# tests, then serve the API (Swagger at http://HOST:PORT/docs).
+# One command for LoanServe: install the requirements into the local Python (no venv), build
+# every artefact that is missing, run the tests, then serve the API (Swagger at
+# http://HOST:PORT/docs). PYTHON=/path/to/python picks the interpreter (default python3).
 #
 #   bash run_loanserve.sh                # build what is missing, test, serve
 #   bash run_loanserve.sh --rebuild      # rebuild every artefact even if it exists
@@ -11,7 +12,8 @@
 #
 # Steps whose input data is missing are skipped with a warning.
 set -euo pipefail
-cd "$(dirname "$0")"
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+cd "$(dirname "$SELF")"
 
 REBUILD=0; RUN_TESTS=1; SERVE=1
 for argument in "$@"; do
@@ -19,7 +21,7 @@ for argument in "$@"; do
     --rebuild) REBUILD=1 ;;
     --skip-tests) RUN_TESTS=0 ;;
     --no-serve) SERVE=0 ;;
-    -h|--help) sed -n '2,13p' "$0"; exit 0 ;;
+    -h|--help) awk 'NR > 1 && /^#/ { print; next } NR > 1 { exit }' "$SELF"; exit 0 ;;
     *) echo "unknown option: $argument" >&2; exit 2 ;;
   esac
 done
@@ -35,39 +37,29 @@ if [ ! -d data ] || [ ! -d loanserve ] || [ ! -f requirements.txt ]; then
   exit 1
 fi
 
-# ------------------------------------------------------------------ 1. Python environment
-say "Python environment"
-if [ ! -x .venv/bin/python ]; then
-  if command -v uv >/dev/null 2>&1; then
-    note "creating .venv with uv (Python 3.12)"
-    uv venv .venv --python 3.12 -q
-  else
-    PYTHON=""
-    for candidate in python3.12 python3.13 python3.11 python3; do
-      if command -v "$candidate" >/dev/null 2>&1; then PYTHON="$candidate"; break; fi
-    done
-    [ -n "$PYTHON" ] || { echo "No python3 found; install Python 3.11+ first." >&2; exit 1; }
-    note "creating .venv with $PYTHON"
-    "$PYTHON" -m venv .venv
-  fi
-fi
-PY=.venv/bin/python
+# ------------------------------------------------------------------ 1. Python (no venv)
+# Uses the interpreter already on the machine and installs into it directly.
+# Set PYTHON=/path/to/python to choose a different one.
+say "Python environment (no venv)"
+PY="${PYTHON:-python3}"
+command -v "$PY" >/dev/null 2>&1 || { echo "No '$PY' found; install Python 3.11+ or set PYTHON=." >&2; exit 1; }
 "$PY" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' \
-  || { echo ".venv uses Python older than 3.11; delete .venv and re-run." >&2; exit 1; }
+  || { echo "$("$PY" -V 2>&1) is too old; Python 3.11+ is needed (set PYTHON=)." >&2; exit 1; }
+note "using $("$PY" -c 'import sys; print(sys.executable, sys.version.split()[0])')"
 
-STAMP=.venv/.loanserve-requirements
-if [ ! -f "$STAMP" ] || ! cmp -s requirements.txt "$STAMP"; then
-  note "installing requirements.txt (first run, or it changed)"
-  if command -v uv >/dev/null 2>&1; then
-    uv pip install -q --python "$PY" -r requirements.txt
-  else
-    "$PY" -m pip install -q --upgrade pip
-    "$PY" -m pip install -q -r requirements.txt
+install_requirements() {
+  local log; log="$(mktemp)"
+  if "$PY" -m pip install -q "$@" > "$log" 2>&1; then rm -f "$log"; return 0; fi
+  if grep -q "externally-managed-environment" "$log"; then
+    note "this Python is externally managed; retrying with --break-system-packages"
+    rm -f "$log"
+    "$PY" -m pip install -q --break-system-packages "$@"
+    return
   fi
-  cp requirements.txt "$STAMP"
-else
-  note "requirements already installed"
-fi
+  cat "$log" >&2; rm -f "$log"; return 1
+}
+note "installing requirements.txt (quick when already installed)"
+install_requirements -r requirements.txt || { echo "Installing requirements failed." >&2; exit 1; }
 mkdir -p artifacts database output/logs processed_data
 
 # The project (and its tests) expect a .env declaring the model settings. An existing one is
@@ -151,7 +143,7 @@ note "built $BUILT, skipped $SKIPPED"
 # ------------------------------------------------------------------ 3. Tests
 if [ "$RUN_TESTS" -eq 1 ]; then
   say "Running the test suite"
-  if .venv/bin/pytest -q -p no:cacheprovider test.py; then
+  if "$PY" -m pytest -q -p no:cacheprovider test.py; then
     note "all tests passed"
   else
     warn "some tests failed (see above)"

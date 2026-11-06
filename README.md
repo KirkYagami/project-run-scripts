@@ -5,9 +5,9 @@ Shell scripts that recreate and run the LoanServe and MeterMind projects.
 | Script | What it does |
 | --- | --- |
 | `loanserve/create_loanserve.sh` | Writes every LoanServe source file (overwrites existing ones). |
-| `loanserve/run_loanserve.sh` | Sets up `.venv`, builds missing artefacts, runs the tests, starts the API. |
+| `loanserve/run_loanserve.sh` | Installs requirements into the local Python, builds missing artefacts, runs the tests, starts the API. |
 | `metermind/create_metermind.sh` | Writes every MeterMind source file (overwrites existing ones). |
-| `metermind/run_metermind.sh` | Sets up `.venv`, builds missing artefacts, runs the tests, starts the API. |
+| `metermind/run_metermind.sh` | Installs requirements into the local Python, builds missing artefacts, runs the tests, starts the API. |
 
 ## Usage
 
@@ -20,6 +20,11 @@ bash run_loanserve.sh      # install, build, test, serve -> http://127.0.0.1:800
 
 `run_*.sh` options: `--rebuild` (redo every artefact), `--skip-tests`, `--no-serve`,
 and `HOST=` / `PORT=` to change where the API listens.
+
+No virtual environment is created: requirements are installed with `pip` into the
+Python on the machine (`python3` by default, or `PYTHON=/path/to/python`), which suits
+a lab environment such as VS Code. If that Python is externally managed (PEP 668),
+the install is retried with `--break-system-packages`. Python 3.11+ is required.
 
 Data files (`data/`) and `.env` are not part of this repo and are never overwritten.
 MeterMind's language-model steps run only when `GEMINI_API_KEY` is set.
