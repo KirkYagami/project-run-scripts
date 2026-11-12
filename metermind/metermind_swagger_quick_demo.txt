@@ -1,0 +1,205 @@
+MeterMind - 10-minute Swagger demo (12 steps)
+
+Start : PORT=3001 ROOT_PATH=/proxy/3001 ./run_metermind.sh --skip-tests  ->  open /proxy/3001/docs
+In Swagger: open the endpoint -> Try it out -> paste -> Execute.
+One inspector account is used for everything, so you never switch tokens.
+Reading IDs differ on every run: copy the reading_id from step 5 (reading C).
+
+==============================================================================
+ 1. Health check
+==============================================================================
+GET /api/v1/health                                   Token: -
+Expect : 200, {"service":"metermind","status":"up"}
+Say    : "The service is up."
+
+==============================================================================
+ 2. Sign up (inspector)
+==============================================================================
+POST /api/v1/accounts                                Token: -
+{
+  "account_number": "ACC90000001",
+  "email_address": "je.1180@discom.example.in",
+  "password": "Inspector@2026",
+  "role": "inspector"
+}
+Expect : 201, no password in the reply
+Say    : "The password is stored as an Argon2 hash and never sent back."
+
+==============================================================================
+ 3. Log in -> Authorize
+==============================================================================
+POST /api/v1/accounts/login                          Token: -
+{
+  "account_number": "ACC90000001",
+  "password": "Inspector@2026"
+}
+Expect : 200, access_token -> padlock (Authorize) -> paste -> Authorize
+Say    : "I get a JWT that carries my role. Protected routes check it."
+
+==============================================================================
+ 4. Submit a good reading (billing engine)
+==============================================================================
+POST /api/v1/readings                                Token: - (meter reader, open)
+{
+  "account_number": "ACC10000123",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675
+}
+Expect : 201, 467 units, energy 2575.7, fixed 150.0, net bill 2854.48, billable
+Say    : "One pricing function: slabs, then fixed charge, then duty, then rebate."
+
+==============================================================================
+ 5. Submit an impossible reading (meter went backwards)
+==============================================================================
+POST /api/v1/readings                                Token: -
+{
+  "account_number": "ACC10000126",
+  "meter_serial": "MTR-AB-223344",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 50000,
+  "current_reading": 49500,
+  "read_type": "estimated"
+}
+Expect : 201, is_billable false, refusal reason given. COPY reading_id (= reading C)
+Say    : "It's saved, but refused with a plain reason. It wasn't a rollover."
+
+==============================================================================
+ 6. Bad input is stopped at the door
+==============================================================================
+POST /api/v1/readings                                Token: -
+{
+  "account_number": "ACC1",
+  "meter_serial": "MTR-AB-123456",
+  "consumer_category": "domestic",
+  "billing_period": "2026-13",
+  "sanctioned_load_kw": 3,
+  "cycle_days": 30,
+  "previous_reading": 14208,
+  "current_reading": 14675
+}
+Expect : 422, two errors (account format, month 13)
+Say    : "Pydantic rejects it before my code even runs."
+
+==============================================================================
+ 7. List the reading book (needs a token)
+==============================================================================
+GET /api/v1/readings                                 Token: inspector
+Query  : page = 1, page_size = 10
+Expect : 200, readings + total
+Say    : "Submitting is open, but the full book needs sign-in. It's paged."
+
+==============================================================================
+ 8. Move the case: raised -> assigned
+==============================================================================
+PATCH /api/v1/readings/{reading_identifier}/status   Token: inspector
+Path   : reading C id (from step 5)
+{
+  "wanted_status": "assigned",
+  "noted_by": "je/1180"
+}
+Expect : 200, from raised to assigned (written to output/audit_trail.csv)
+Say    : "Only an inspector can move a case, and every move is audited."
+
+==============================================================================
+ 9. Move the case: skip a step (guard)
+==============================================================================
+PATCH /api/v1/readings/{reading_identifier}/status   Token: inspector
+Path   : reading C id
+{
+  "wanted_status": "regularised",
+  "noted_by": "je/1180"
+}
+Expect : 409, may move to inspected, not to regularised
+Say    : "The case has a fixed ladder. You can't skip a step."
+
+==============================================================================
+10. ML screening: normal customer
+==============================================================================
+POST /api/v1/screening                               Token: inspector
+{
+  "account_number": "ACC10000009",
+  "meter_serial": "MTR-AB-100009",
+  "consumer_category": "commercial",
+  "billing_period": "2025-06",
+  "sanctioned_load_kw": 9.687,
+  "cycle_days": 34,
+  "previous_reading": 47781.9,
+  "current_reading": 48842.7,
+  "units_consumed": 1060.8,
+  "twelve_month_average_units": 1108.99,
+  "same_month_last_year_units": 1148.85,
+  "consecutive_estimated_reads": 1,
+  "days_since_actual_read": 38,
+  "neighbourhood_average_units": 1197.51,
+  "arrears_inr": 1163.41,
+  "payment_defaults_last_year": 3,
+  "seal_check_result": "intact",
+  "meter_make": "Avon",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30"
+}
+Expect : 200, genuine_high_usage -> queue_no_action.csv
+Say    : "Usage is close to its own history, so the random forest says no action."
+
+==============================================================================
+11. ML screening: usage far above its history
+==============================================================================
+POST /api/v1/screening                               Token: inspector
+{
+  "account_number": "ACC10000022",
+  "meter_serial": "MTR-AB-100022",
+  "consumer_category": "domestic",
+  "billing_period": "2025-09",
+  "sanctioned_load_kw": 9.608,
+  "cycle_days": 29,
+  "previous_reading": 27125.1,
+  "current_reading": 28337.4,
+  "units_consumed": 1212.2,
+  "twelve_month_average_units": 424.28,
+  "same_month_last_year_units": 363.67,
+  "consecutive_estimated_reads": 0,
+  "days_since_actual_read": 37,
+  "neighbourhood_average_units": 484.9,
+  "arrears_inr": 3572.83,
+  "payment_defaults_last_year": 2,
+  "seal_check_result": "intact",
+  "meter_make": "HPL",
+  "division": "East",
+  "meter_install_date": "2021-03-01",
+  "cycle_end_date": "2025-06-30"
+}
+Expect : 200, tariff_mismatch -> queue_billing.csv
+Say    : "Three times its normal usage, so it goes to billing to check the load.
+          It isn't called tamper. Tamper needs 60% confidence."
+
+==============================================================================
+12. Assistant (LangGraph agent)
+==============================================================================
+POST /api/v1/assistant/questions                     Token: inspector
+{
+  "question": "Why is my bill for June so high this month?",
+  "consumer_category": "domestic",
+  "billing_period": "2026-06",
+  "thread_id": "demo-bill"
+}
+Expect : 200 with GEMINI_API_KEY set (wording varies); 503 without a key
+Show   : category, urgency, steps (triage -> plan -> tools -> draft -> critique
+         -> gate -> respond), tools_called, held
+Say    : "Tools do the maths and the LLM only picks tools and writes the reply.
+          If it reads tamper, the gate holds the run for an inspector."
+
+------------------------------------------------------------------------------
+Time  : about 45 seconds per step. Steps 10 and 11 need trained artifacts,
+        and step 12 needs a key. Test both before going live.
+Dropped from the full sheet: extra sign-ups and login guards, the commercial,
+agricultural and misspelt readings, filters and paging, PUT, DELETE, the other
+case moves, and the release endpoints.
