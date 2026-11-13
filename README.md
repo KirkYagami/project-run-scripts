@@ -1,6 +1,6 @@
 # Project run scripts
 
-Shell scripts that recreate and run the LoanServe and MeterMind projects.
+Shell scripts that recreate and run the LoanServe, MeterMind and AssetGuard AI projects.
 
 | Script | What it does |
 | --- | --- |
@@ -10,8 +10,13 @@ Shell scripts that recreate and run the LoanServe and MeterMind projects.
 | `metermind/create_metermind.sh` | Writes every MeterMind source file (overwrites existing ones). |
 | `metermind/run_metermind.sh` | Installs requirements into the local Python, builds missing artefacts, runs the tests, starts the API. |
 | `metermind/metermind_swagger_paste.txt` | Every MeterMind endpoint in demo order: body to paste into Swagger, token, expected result. |
+| `assetguard/build_project.sh` | Writes the whole AssetGuard AI project (code, Dockerfile, data, manuals) and verifies checksums. |
+| `assetguard/run_on_ec2.sh` | Deploys AssetGuard AI on a fresh EC2 instance with Docker: dashboard on :8080, API on :8081. See [`assetguard/README.md`](assetguard/README.md). |
 
 ## Usage
+
+AssetGuard AI runs in Docker on EC2; its steps are in [`assetguard/README.md`](assetguard/README.md).
+The rest of this section covers LoanServe and MeterMind.
 
 Copy the scripts into the project folder (the one holding `data/`) and run them from there:
 
