@@ -1,0 +1,10 @@
+.env
+.env.*
+.venv/
+.clearauth-deps
+__pycache__/
+.pytest_cache/
+*.pyc
+database/
+processed/
+output/

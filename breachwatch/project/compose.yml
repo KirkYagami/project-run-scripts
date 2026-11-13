@@ -1,0 +1,36 @@
+# BreachWatch AI: one container, dashboard on 8080, REST API on 8081.
+#
+#   docker compose up -d --build     start (or rebuild after a code change)
+#   docker compose down              stop (data volumes are kept)
+#   docker compose down -v           stop and wipe all data
+#
+# Ports and the bind address of the API come from .env (written by run_on_ec2.sh).
+name: breachwatch
+
+services:
+  breachwatch:
+    build: .
+    image: breachwatch-ai:latest
+    container_name: breachwatch-ai
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${DASHBOARD_PORT:-8080}:8080"
+      # Set API_BIND=127.0.0.1 in .env to keep the API private (reach /docs over an SSH tunnel).
+      - "${API_BIND:-0.0.0.0}:${API_PORT:-8081}:8081"
+    volumes:
+      - breachwatch_database:/app/database     # breachwatch.db, checkpoint.db, chroma_store
+      - breachwatch_output:/app/output         # trained models and metrics
+      - breachwatch_processed:/app/processed   # cleaned training data
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request as u; u.urlopen('http://127.0.0.1:8080/_stcore/health', timeout=3); u.urlopen('http://127.0.0.1:8081/openapi.json', timeout=3)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # The first start cleans the data, trains the models and builds the procedure index.
+      start_period: 20m
+
+volumes:
+  breachwatch_database:
+  breachwatch_output:
+  breachwatch_processed:

@@ -1,0 +1,37 @@
+# How the dashboard is served, and how it looks.
+#
+# Streamlit reads this file automatically when it is started from the Project
+# folder, which is where you run:
+#
+#     python3 -m streamlit run run_dashboard.py
+
+[server]
+# The assessment container only exposes 8080 and 8081. 8081 is the REST service.
+port = 8080
+address = "0.0.0.0"
+# headless = true: inside a container there is no browser to open.
+headless = true
+# ...and this stops it asking for an email address the first time, which would sit
+# waiting for an answer and look as though the program had frozen.
+showEmailPrompt = false
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Hide the developer menu. Nobody reviewing a work order needs "Rerun" or
+# "Clear cache" in the corner of the screen.
+toolbarMode = "minimal"
+
+[theme]
+base = "light"
+primaryColor = "#0F4C81"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F3F6FA"
+textColor = "#1B2A38"
+borderColor = "#DCE3EB"
+dataframeHeaderBackgroundColor = "#EEF3F8"
+baseRadius = "medium"
+baseFontSize = 15
+showWidgetBorder = true
+showSidebarBorder = true

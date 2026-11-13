@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+database/*.db
+state/
+.git
+Dockerfile
+docker-compose.yml
+README.md
+deploy/

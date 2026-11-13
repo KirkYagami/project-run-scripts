@@ -13,6 +13,11 @@ Tested on Ubuntu 24.04: full run, the project's offline checks (50 tests and the
 smoke test) inside the container, and `docker compose down` / `up`. The Docker + Compose
 install steps are shared with the BillRight scripts, which were tested on Amazon Linux 2023.
 
+The [`project/`](project/) folder holds every file `build_project.sh` writes (code, Dockerfile,
+compose file, entrypoint, data), so you can browse the code on GitHub. To deploy you still
+only need the two scripts; regenerate `project/` with `bash build_project.sh project` after
+updating the script.
+
 ## 1. Launch the instance
 
 - **Type:** t3.large (2 vCPU, 8 GB) or bigger. Smaller machines get a 4 GB swap file but train slowly.

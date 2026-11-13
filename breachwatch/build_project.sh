@@ -47,13 +47,16 @@ FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DEFAULT_TIMEOUT=120 \
+    PIP_RETRIES=10
 WORKDIR /app
 
-# CPU-only torch first, so requirements.txt never pulls the CUDA build.
+# CPU-only torch first (own layer, so a later failure does not redownload it), so
+# requirements.txt never pulls the CUDA build.
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 COPY requirements.txt ./
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu \
- && pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Bake the embedding model into the image so the first start needs no download.
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
@@ -111346,7 +111349,7 @@ if command -v sha256sum >/dev/null 2>&1; then SHA="sha256sum"; else SHA="shasum 
 if ! $SHA -c /dev/stdin > /tmp/breachwatch_checksums.log 2>&1 <<'__BREACHWATCH_SUMS__'
 a295dca0a5842c19eec907e53ad6cedb135f74487bc0ad905615a006c3e9b016  .dockerignore
 a59df7f9ea4d38c54423dbbda02ee18ea9b90c435ee0b640f44d59e2c2c571c8  .env.example
-528f59d4c5577efee9e0428ff9676f882a4c7f848db152e4ab0c7c5956bdfc94  Dockerfile
+865b4dffa0f8e5aff75b47812b98380b9ae5c27f8066f5fd912fdb7d40c3736f  Dockerfile
 6b2c06e4098f8d2c88e947630a1e555d33ee292f80961b11cfbc8dd8ee94d253  README.md
 7847987d0be421ffe76742653d0d10212d60603c4b7c04f67e1c9628cb755399  access/password_security.py
 9aae35361dbcf9f62e4c17bc1e1ab0555dd6d471e03f1fedc41583c03e1012ca  access/permissions.py

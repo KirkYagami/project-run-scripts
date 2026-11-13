@@ -1,0 +1,15 @@
+services:
+  assetguard:
+    build: .
+    image: assetguard-ai:latest
+    container_name: assetguard-ai
+    env_file: .env
+    ports:
+      - "8080:8080"   # dashboard
+      - "8081:8081"   # REST API (/docs)
+    volumes:
+      - assetguard-state:/app/state   # assetguard.db + checkpoint.db
+    restart: unless-stopped
+
+volumes:
+  assetguard-state:

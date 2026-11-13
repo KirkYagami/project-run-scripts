@@ -10,6 +10,11 @@ REST API, manual chat backed by Gemini) to a fresh EC2 instance with Docker.
 
 Tested on Ubuntu 24.04 (full run) and Amazon Linux 2023 (Docker install step).
 
+The [`project/`](project/) folder holds every file `build_project.sh` writes (code, Dockerfile,
+compose file, entrypoint, data), so you can browse the code on GitHub. To deploy you still
+only need the two scripts; regenerate `project/` with `bash build_project.sh project` after
+updating the script.
+
 ## 1. Launch the instance
 
 - **Type:** t3.large (2 vCPU, 8 GB) or bigger. Smaller machines get a 4 GB swap file but train slowly.

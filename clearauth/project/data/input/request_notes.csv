@@ -1,0 +1,105 @@
+note_id,request_reference,note_number,note_author_role,note_text
+NTE-880874,PA-561315,2,Physiotherapy report,Mrs Brennan has completed 10 weeks of physiotherapy.
+NTE-880778,PA-562388,3,Imaging report,Weight-bearing X-rays show Kellgren-Lawrence grade 3 changes.
+NTE-880705,PA-562610,3,Specialist letter,The Epworth Sleepiness Scale score is 14. She has had near misses while driving because of sleepiness. A home sleep apnoea test has not been performed. Her partner has noticed loud snoring.
+NTE-880673,PA-562351,3,Imaging report,Weight&#45;bearing X-rays show Kellgren-Lawrence grade 2 changes.
+NTE-880597,PA-562647,2,Family physician letter,"He has had near misses while driving because of sleepiness. He has no history of heart failure, COPD or neuromuscular disease. His partner has noticed loud snoring."
+NTE-880591,PA-562647,1,Sleep clinic letter,<span>I saw this 43-year-old man in clinic today. A home sleep apnoea test was <b>negative despite a high clinical suspicion. Please contact me if you need any further information.</p>
+NTE-880499,PA-561611,1,Specialist letter,<div>I saw this 41&#45;year-old woman in clinic today. The psychological assessment has been completed and she is suitable for surgery. She is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Background of obstructive sleep apnoea treated with CPAP. Please contact me if you need any further information.</div>
+NTE-880499,PA-561611,1,Specialist letter,<div>I saw this 41&#45;year-old woman in clinic today. The psychological assessment has been completed and she is suitable for surgery. She is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Background of obstructive sleep apnoea treated with CPAP. Please contact me if you need any further information.</div>
+NTE-880551,PA-562203,2,Physiotherapy report,Mr Lindqvist has completed 9 weeks of physiotherapy.
+NTE-880610,PA-562129,2,Physiotherapy report,<span>Mr Fraser has completed 13 weeks of physiotherapy.</span>
+NTE-880781,PA-562092,1,Family physician letter,<span>I saw this 60-year-old man in clinic today. The neck pain prevents him from working. He has tried naproxen and amitriptyline without benefit. There are <b>no signs of myelopathy on examination. Plain X-rays of the cervical spine show degenerative changes at C5/6. Please contact me if you need any further information.</p>
+NTE-880896,PA-561204,1,Family physician letter,I saw this 46-year-old woman in clinic today. The back pain prevents her from working. She has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Plain X-rays of the lumbar spine show degenerative changes at L4/5 and L5/S1. Please contact me if you need any further information.
+NTE-880479,PA-562462,2,Dietitian report,<div>Mrs Okafor has attended a <br/>supervised weight-management programme for 16 months.</p>
+NTE-880865,PA-561537,3,Psychology report,The psychological assessment has been completed and she is suitable for surgery.
+NTE-880857,PA-561537,2,Dietitian report,Mrs Lindqvist has attended a supervised weight-management programme for 4 months.
+NTE-880454,PA-562055,1,Family physician letter,I saw this 51-year-old man in clinic today. The neck pain prevents him from working. He has tried naproxen and amitriptyline without benefit. There are no signs of myelopathy on examination. Plain X-rays of the cervical spine show degenerative changes at C5/6. Please contact me if you need any further information.
+NTE-880750,PA-561981,1,Family physician letter, I saw this 55-year-old woman in clinic today.  The back pain prevents her from working. She has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information. 
+NTE-880446,PA-561574,4,Surgical pre-assessment,Background of type 2 diabetes treated with metformin.
+NTE-880547,PA-562203,1,Family physician letter,I saw this 54-year-old man in clinic today. There are no signs of myelopathy on examination. Please contact me if you need any further information.
+NTE-880848,PA-562018,3,Imaging report,<p>Plain X-rays of the lumbar spine <br/>show degenerative changes at L4/5 and L5/S1.</p>
+NTE-880543,PA-562166,3,Imaging report,A previous MRI 15 months ago showed a disc protrusion at C5/6.
+NTE-880885,PA-561833,2,Specialist letter,The&nbsp;back pain prevents her from working. Mrs Mensah has completed eight weeks of supervised physiotherapy. She has tried naproxen and gabapentin without benefit.
+NTE-880517,PA-561389,1,Family physician letter,I saw this 44-year-old woman in clinic today. The neck pain prevents her from working. Mrs Haddad has been attending physiotherapy. She has tried naproxen and amitriptyline without benefit. There are no signs of myelopathy on examination. Plain X-rays of the cervical spine show degenerative changes at C5/6. Please contact me if you need any further information.
+NTE-880470,PA-561870,2,Family physician letter,"<div>The Epworth Sleepiness Scale score is 12. She has had near misses while driving because of sleepiness. She has type 2 diabetes treated with metformin. She has no history of heart failure, COPD or neuromuscular disease. Her partner has noticed loud snoring.</span>"
+NTE-880668,PA-562351,2,Physiotherapy report,Mrs Mensah has had 38 weeks of physiotherapy for the knee.
+NTE-880794,PA-561426,1,Specialist letter,I saw this 67-year-old woman in clinic today. The Oxford Knee Score today is 19 out of 48. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. She has hypertension on two medicines. Please contact me if you need any further information.
+NTE-880733,PA-561907,3,Imaging report,Plain X&#45;rays of the lumbar spine show degenerative changes at L4/5 and L5/S1.
+NTE-880515,PA-561796,3,Imaging report,Weight&#45;bearing X-rays show Kellgren-Lawrence grade 4 changes.
+NTE-880872,PA-561315,1,Family physician letter,I saw this 58&#45;year-old woman in clinic today. The back pain prevents her from working. She has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information.
+NTE-880788,PA-562092,2,Physiotherapy report,Mr&nbsp;Okafor has been attending physiotherapy.
+NTE-880726,PA-561907,2,Physiotherapy report,Mrs Fraser has completed three weeks of physiotherapy.
+NTE-880542,PA-562166,2,physiotherapy report,Mrs Fraser has been attending physiotherapy.
+NTE-880818,PA-561944,3,Imaging report,A previous MRI 10 months ago showed a disc protrusion at L4/5.
+NTE-880697,PA-562610,2,Family physician letter,She has hypertension on two medicines. She has depression treated with sertraline. She has chronic obstructive pulmonary disease. She has osteoarthritis of both hips.
+NTE-880541,PA-562166,1,Family physician letter,I saw this 58&#45;year-old woman in clinic today. The neck pain prevents her from working. She has tried naproxen and amitriptyline without benefit. There are no signs of myelopathy on examination. Please contact me if you need any further information.
+NTE-880807,PA-561944,1,Family physician letter,I saw this 58-year-old woman in clinic today. There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information.
+NTE-880493,PA-562277,4,Surgical pre-assessment,She has hypertension on two medicines. She has asthma.
+NTE-880420,PA-561352,2,Physiotherapy report,Mr Brennan has completed eight weeks of physiotherapy.
+NTE-880790,PA-561722,1,Sleep clinic letter,"I saw this 55&#45;year-old woman in clinic today. The Epworth Sleepiness Scale score is 8. She has had near misses while driving because of sleepiness. A home sleep apnoea test was inconclusive because of poor signal quality. She has hypertension on two medicines. She has no history of heart failure, COPD or neuromuscular disease. Her partner has noticed loud snoring. Please contact me if you need any further information."
+NTE-880537,PA-562314,2,Physiotherapy report,Mrs Haddad has had 26 weeks of physiotherapy for the knee.
+NTE-880806,PA-561426,3,Imaging report,Weight-bearing X-rays show Kellgren-Lawrence grade 4 changes.
+NTE-880826,PA-561944,4,Specialist letter,The back pain prevents her from working. She has tried naproxen and gabapentin without benefit.
+NTE-880440,PA-561574,3,Psychology report,<div>The psychological assessment has been completed <br/>and he is suitable for surgery.</span>
+NTE-880626,PA-561500,2,Physiotherapy report,Mr Fraser has had fourteen weeks of physiotherapy for the knee.
+NTE-880651,PA-562536,1,Sleep clinic letter,I saw this 51-year-old woman in clinic today. Please contact me if you need any further information.
+NTE-880615,PA-562129,3,Imaging report,Plain X-rays of the cervical spine show degenerative changes at C5/6.
+NTE-880655,PA-562536,2,Family physician letter,"She has asthma. She has no history of heart failure, COPD or neuromuscular disease."
+NTE-880735,PA-562425,1,Specialist letter,I saw this 38-year-old man in clinic today. Mr Fraser has attended a supervised weight-management programme for 8 months. The psychological assessment has been completed and he is suitable for surgery. He is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Please contact me if you need any further information.
+NTE-880620,PA-561500,1,Specialist letter,I saw this 64-year-old man in clinic today. Weight-bearing X-rays show Kellgren-Lawrence grade 4 changes. He cannot climb stairs without a rail. Regular naproxen has not controlled the pain. Please contact me if you need any further information.
+NTE-880636,PA-561241,2,Physiotherapy report,<div>Mr Haddad has completed 5 weeks of physiotherapy.</p>
+NTE-880631,PA-561241,1,FAMILY PHYSICIAN LETTER,I saw this 52-year-old man in clinic today. The neck pain prevents him from working. He has tried naproxen and amitriptyline without benefit. There are no signs of myelopathy on examination. Plain X-rays of the cervical spine show degenerative changes at C5/6. Please contact me if you need any further information.
+NTE-880763,PA-561981,3,Imaging report,Plain X-rays of the lumbar spine show degenerative changes at L4/5 and L5/S1.
+NTE-880665,PA-562351,1,Specialist letter,I saw this 81-year-old woman in clinic today. The Oxford Knee Score today is 23 out of 48. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. She has chronic obstructive pulmonary disease. Please contact me if you need any further information.
+NTE-880642,PA-561685,1,Sleep clinic letter,I saw this 47-year-old man in clinic today. A home sleep apnoea test showed moderate obstructive sleep apnoea. Please contact me if you need any further information.
+NTE-880474,PA-562499,1,Specialist letter,I saw this 41&#45;year-old man in clinic today. Mr Mensah has attended a supervised weight-management programme for 8 months. The psychological assessment has been completed and he is suitable for surgery. He is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Background of gastro-oesophageal reflux disease. Background of osteoarthritis of both hips. Please contact me if you need any further information.
+NTE-880506,PA-561611,2,Dietitian report,Mrs Lindqvist has attended a supervised weight-management programme for 8 months.
+NTE-880721,PA-561907,1,Family physician letter,I saw this 27-year-old woman in clinic today. The back pain prevents her from working. She has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information.
+NTE-880831,PA-561463,2,Physiotherapy report,<p>Mrs&nbsp;Novak has had 20 weeks of physiotherapy for the knee.</div>
+NTE-880685,PA-561759,2,PHYSIOTHERAPY REPORT,Mr Fraser has completed eight weeks of physiotherapy.
+NTE-880575,PA-562573,2,Family physician letter,"She has hypertension on two medicines. She has no history of heart failure, COPD or neuromuscular disease."
+NTE-880800,PA-561426,2,PHYSIOTHERAPY REPORT,Mrs Fraser has had 16 weeks of physiotherapy for the knee.
+NTE-880681,PA-561759,1,Family physician letter,I saw this 16-year-old man in clinic today. The back pain prevents him from working. He has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Plain X-rays of the lumbar spine show degenerative changes at L4/5 and L5/S1. Please contact me if you need any further information.
+NTE-880432,PA-561574,2,Dietitian report,Mr Lindqvist has attended a supervised weight-management programme for 7 months.
+NTE-880509,PA-561796,1,specialist letter,I saw this 69-year-old man in clinic today. The Oxford Knee Score today is 17 out of 48. He cannot climb stairs without a rail. Regular naproxen has not controlled the pain. He has high cholesterol on a statin. Please contact me if you need any further information.
+NTE-880413,PA-561352,1,Family physician letter,I saw this 49-year-old man in clinic today. The back pain prevents him from working. He has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. A previous MRI 5 months ago showed a disc protrusion at L4/5. Please contact me if you need any further information.
+NTE-880876,PA-561315,3,imaging report,"<span>A previous MRI 5 months ago showed a disc protrusion at <br/>L4/5, and new numbness in the left foot has developed since.</span>"
+NTE-880527,PA-561278,1,Family physician letter,I saw this 61&#45;year-old man in clinic today. The back pain prevents him from working. Mr Lindqvist has completed 2 weeks of physiotherapy. He has tried naproxen and gabapentin without benefit. He reports new urinary retention and loss of bladder control. Plain X-rays of the lumbar spine show degenerative changes at L4/5 and L5/S1. Please contact me if you need any further information.
+NTE-880476,PA-562462,1,Specialist letter,<div>I saw this 43-year-old woman in clinic today. The psychological assessment has been completed and she is suitable for surgery. She is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Background of hypertension on two medicines. Background of osteoarthritis of both hips. Background of asthma. Please contact me if you need any further information.</span>
+NTE-880488,PA-562277,2,Physiotherapy report,<span>Mrs Iqbal has had twelve weeks of physiotherapy for the knee.</p>
+NTE-880891,PA-561833,3,Imaging report,Plain X&#45;rays of the lumbar spine show degenerative changes at L4/5 and L5/S1.
+NTE-880810,PA-561944,2,Physiotherapy report,Mrs Novak has completed 19 weeks of physiotherapy.
+NTE-880572,PA-562573,1,Sleep clinic letter,I saw this 39-year-old woman in clinic today. Please contact me if you need any further information.
+NTE-880740,PA-562240,1,Specialist letter,I saw this 73-year-old woman in clinic today. The Oxford Knee Score today is 21 out of 48. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. She has high cholesterol on a statin. She has type 2 diabetes treated with metformin. Please contact me if you need any further information.
+NTE-880773,PA-562388,2,PHYSIOTHERAPY REPORT,Mrs Okafor has had 26 weeks of physiotherapy for the knee.
+NTE-880514,PA-561796,2,Physiotherapy report,Mr Iqbal has had twenty-four weeks of physiotherapy for the knee.
+NTE-880838,PA-561463,3,Imaging report,Weight-bearing X-rays show Kellgren-Lawrence grade 3 changes.
+NTE-880532,PA-562314,1,SPECIALIST LETTER,<div>I saw this 70-year-old woman in clinic today. Weight-bearing X-rays show Kellgren-Lawrence grade 3 changes. The Oxford Knee Score today is 24 out of 48. She cannot climb stairs without <b>a rail. Regular naproxen has not controlled the pain. She has high cholesterol on a statin. She has osteoarthritis of both hips. Please contact me if you need any further information.</span>
+NTE-880743,PA-562240,3,IMAGING REPORT,Weight&#45;bearing X-rays show Kellgren-Lawrence grade 3 changes.
+NTE-880877,PA-561833,1,Family physician letter,  I saw this 53-year-old woman in clinic today.  There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information. 
+NTE-880558,PA-562203,3,Imaging report,A previous MRI 11 months ago showed a disc protrusion at C5/6.
+NTE-880769,PA-562388,1,Specialist letter,I saw this 55-year-old woman in clinic today.  The Oxford Knee Score today is 27 out of 48. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. She has hypertension on two medicines. Please contact me if you need any further information. 
+NTE-880840,PA-562018,1,Family physician letter,I saw this 39&#45;year-old man in clinic today. The back pain prevents him from working. He has tried naproxen and gabapentin without benefit. There is no saddle anaesthesia or sphincter disturbance. Please contact me if you need any further information.
+NTE-880588,PA-562573,4,Sleep clinic letter,Thank you for considering this request.
+NTE-880605,PA-562129,1,Family physician letter,I saw this 66-year-old man in clinic today. The neck pain prevents him from working. He has tried naproxen and amitriptyline without benefit. There are no signs of myelopathy on examination. Please contact me if you need any further information.
+NTE-880480,PA-562277,1,Specialist letter,I saw this 47-year-old woman in clinic today. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. Please contact me if you need any further information.
+NTE-880852,PA-561537,1,Specialist letter,I saw this 38-year-old woman in clinic today. She is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Background of hypertension on two medicines. Please contact me if you need any further information.
+NTE-880543,PA-562166,3,Imaging report,A previous MRI 15 months ago showed a disc protrusion at C5/6.
+NTE-880693,PA-562610,1,Sleep clinic letter,I saw this 49-year-old woman in clinic today. Please contact me if you need any further information.
+NTE-880899,PA-561204,2,Physiotherapy report,Mrs Iqbal has completed five weeks of physiotherapy.
+NTE-880424,PA-561574,1,Specialist letter,I saw this 45&#45;year-old man in clinic today. He is breathless on minimal exertion. A course of orlistat did not lead to sustained weight loss. Please contact me if you need any further information.
+NTE-880460,PA-562055,2,Physiotherapy report,Mr Lindqvist has completed 13 weeks of physiotherapy.
+NTE-880827,PA-561463,1,Specialist letter,I saw this 71-year-old woman in clinic today. The Oxford Knee Score today is 21 out of 48. She cannot climb stairs without a rail. Regular naproxen has not controlled the pain. She has hypertension on two medicines. She has type 2 diabetes treated with metformin. Please contact me if you need any further information.
+NTE-880741,PA-562240,2,Physiotherapy report,<div>Mrs Fraser has had twenty <br/>weeks of physiotherapy for the knee.</div>
+NTE-880525,PA-561648,2,Family physician letter,The Epworth Sleepiness Scale score is 14. He has had near misses while driving because of sleepiness. He has chronic obstructive pulmonary disease. He has hypertension on two medicines. His partner has noticed loud snoring.
+NTE-880663,PA-562536,3,Specialist letter,The Epworth Sleepiness Scale score is 10. She has had near misses while driving because of sleepiness. A home sleep apnoea test was inconclusive because of poor signal quality. Her partner has noticed loud snoring.
+NTE-880755,PA-561981,2,Physiotherapy report,Mrs Okafor has completed 14 weeks of physiotherapy. 
+NTE-880466,PA-561870,1,sleep clinic letter,I saw this 50-year-old woman in clinic today. A home sleep apnoea test was negative despite a high clinical suspicion. Please contact me if you need any further information.
+NTE-880644,PA-561685,2,Family physician letter,"The Epworth Sleepiness Scale score is 13. He has had near misses while driving because of sleepiness. He has no history of heart failure, COPD or neuromuscular disease. His partner has noticed loud snoring."
+NTE-880519,PA-561648,1,Sleep clinic letter,I saw this 63&#45;year-old man in clinic today. A home sleep apnoea test has not been performed. Please contact me if you need any further information.
+NTE-880491,PA-562277,3,Imaging report,  <div>Weight&#45;bearing X-rays show <br/>Kellgren-Lawrence grade 4 changes.</div> 
+NTE-880844,PA-562018,2,Physiotherapy report,Mr Haddad has completed 13 weeks of physiotherapy.
+NTE-880564,PA-562203,4,Specialist letter,The neck pain prevents him from working. He has tried naproxen and amitriptyline without benefit.
+NTE-880583,PA-562573,3,Specialist letter,The Epworth Sleepiness Scale score is 14. She has had near misses while driving because of sleepiness. A home sleep apnoea test showed moderate obstructive sleep apnoea. Her partner has noticed loud snoring.
+NTE-880713,PA-562610,4,Sleep clinic letter,  Thank you for considering this request. 

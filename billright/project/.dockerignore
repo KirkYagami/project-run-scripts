@@ -1,0 +1,9 @@
+.env
+.git
+.ppt_build
+.ppt_output
+database
+output
+processed
+__pycache__
+*.pyc
