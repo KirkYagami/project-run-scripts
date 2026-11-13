@@ -1,6 +1,6 @@
 # Project run scripts
 
-Shell scripts that recreate and run the LoanServe, MeterMind and AssetGuard AI projects.
+Shell scripts that recreate and run the LoanServe, MeterMind, AssetGuard AI and BillRight AI projects.
 
 | Script | What it does |
 | --- | --- |
@@ -12,10 +12,13 @@ Shell scripts that recreate and run the LoanServe, MeterMind and AssetGuard AI p
 | `metermind/metermind_swagger_paste.txt` | Every MeterMind endpoint in demo order: body to paste into Swagger, token, expected result. |
 | `assetguard/build_project.sh` | Writes the whole AssetGuard AI project (code, Dockerfile, data, manuals) and verifies checksums. |
 | `assetguard/run_on_ec2.sh` | Deploys AssetGuard AI on a fresh EC2 instance with Docker: dashboard on :8080, API on :8081. See [`assetguard/README.md`](assetguard/README.md). |
+| `billright/build_project.sh` | Writes the whole BillRight AI project (code, Dockerfile, compose.yml, data, PDFs) and verifies checksums. |
+| `billright/run_on_ec2.sh` | Deploys BillRight AI on a fresh EC2 instance with Docker Compose: dashboard on :8080, API on :8081. See [`billright/README.md`](billright/README.md). |
 
 ## Usage
 
-AssetGuard AI runs in Docker on EC2; its steps are in [`assetguard/README.md`](assetguard/README.md).
+AssetGuard AI and BillRight AI run in Docker on EC2; their steps are in [`assetguard/README.md`](assetguard/README.md)
+and [`billright/README.md`](billright/README.md).
 The rest of this section covers LoanServe and MeterMind.
 
 Copy the scripts into the project folder (the one holding `data/`) and run them from there:
