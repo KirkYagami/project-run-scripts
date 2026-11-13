@@ -1,6 +1,6 @@
 # Project run scripts
 
-Shell scripts that recreate and run the LoanServe, MeterMind, AssetGuard AI, BillRight AI and ClearAuth AI projects.
+Shell scripts that recreate and run the LoanServe, MeterMind, AssetGuard AI, BillRight AI, ClearAuth AI and BreachWatch AI projects.
 
 | Script | What it does |
 | --- | --- |
@@ -16,12 +16,14 @@ Shell scripts that recreate and run the LoanServe, MeterMind, AssetGuard AI, Bil
 | `billright/run_on_ec2.sh` | Deploys BillRight AI on a fresh EC2 instance with Docker Compose: dashboard on :8080, API on :8081. See [`billright/README.md`](billright/README.md). |
 | `clearauth/build_project.sh` | Writes the whole ClearAuth AI project (code, Dockerfile, compose.yml, data, policy PDFs) and verifies checksums. |
 | `clearauth/run_on_ec2.sh` | Deploys ClearAuth AI on a fresh EC2 instance with Docker Compose: dashboard on :8080, API on :8081. See [`clearauth/README.md`](clearauth/README.md). |
+| `breachwatch/build_project.sh` | Writes the whole BreachWatch AI project (code, Dockerfile, compose.yml, data, procedure PDFs) and verifies checksums. |
+| `breachwatch/run_on_ec2.sh` | Deploys BreachWatch AI on a fresh EC2 instance with Docker Compose: dashboard on :8080, API on :8081. See [`breachwatch/README.md`](breachwatch/README.md). |
 
 ## Usage
 
-AssetGuard AI, BillRight AI and ClearAuth AI run in Docker on EC2; their steps are in
-[`assetguard/README.md`](assetguard/README.md), [`billright/README.md`](billright/README.md)
-and [`clearauth/README.md`](clearauth/README.md).
+AssetGuard AI, BillRight AI, ClearAuth AI and BreachWatch AI run in Docker on EC2; their steps are in
+[`assetguard/README.md`](assetguard/README.md), [`billright/README.md`](billright/README.md),
+[`clearauth/README.md`](clearauth/README.md) and [`breachwatch/README.md`](breachwatch/README.md).
 The rest of this section covers LoanServe and MeterMind.
 
 Copy the scripts into the project folder (the one holding `data/`) and run them from there:
